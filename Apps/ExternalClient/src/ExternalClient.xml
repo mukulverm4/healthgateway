@@ -1,0 +1,681 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ExternalClient</name>
+    </assembly>
+    <members>
+        <member name="T:HealthGateway.ExternalClient.Constant.RegistrationStatus">
+            <summary>
+            Registration status modes.
+            </summary>
+        </member>
+        <member name="F:HealthGateway.ExternalClient.Constant.RegistrationStatus.Open">
+            <summary>
+            Registration is open.
+            </summary>
+        </member>
+        <member name="F:HealthGateway.ExternalClient.Constant.RegistrationStatus.Closed">
+            <summary>
+            Registration is closed.
+            </summary>
+        </member>
+        <member name="F:HealthGateway.ExternalClient.Constant.RegistrationStatus.InviteOnly">
+            <summary>
+            Registration is on Invite only mode.
+            </summary>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Controllers.ConfigurationController">
+            <summary>
+            Web API to return Health Gateway configuration to approved clients.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Controllers.ConfigurationController.#ctor(HealthGateway.ExternalClient.Services.IConfigurationService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HealthGateway.ExternalClient.Controllers.ConfigurationController"/> class.
+            </summary>
+            <param name="service">The injected configuration service provider.</param>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Controllers.ConfigurationController.Index">
+            <summary>
+            Returns the external Health Gateway configuration.
+            </summary>
+            <returns>The Health Gatway Configuration.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Controllers.DumpHeadersController">
+            <summary>
+            HomeController for Vue ExternalClient app.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Controllers.DumpHeadersController.Index">
+            <summary>
+            The default page for the home controller.
+            </summary>
+            <returns>The default view.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Controllers.HomeController">
+            <summary>
+            HomeController for Vue ExternalClient app.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Controllers.HomeController.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HealthGateway.ExternalClient.Controllers.HomeController"/> class.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Controllers.HomeController.Index">
+            <summary>
+            The default page for the home controller.
+            </summary>
+            <returns>The default view.</returns>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Controllers.HomeController.Logo">
+            <summary>
+            The bc gov logo image.
+            </summary>
+            <returns>The logo image.</returns>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Controllers.HomeController.Error">
+            <summary>
+            The default page for error.
+            </summary>
+            <returns>The default view.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Controllers.RobotsController">
+            <summary>
+            Dynamic Robots.txt for search engines.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Controllers.RobotsController.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HealthGateway.ExternalClient.Controllers.RobotsController"/> class.
+            </summary>
+            <param name="configuration">The injected configuration.</param>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Controllers.RobotsController.Robots">
+            <summary>
+            Serves up an environment specific robots.txt.
+            </summary>
+            <returns>The robots text file.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Controllers.UserProfileController">
+            <summary>
+            Web API to handle user profile interactions.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Controllers.UserProfileController.#ctor(HealthGateway.ExternalClient.Services.IUserProfileService,Microsoft.AspNetCore.Http.IHttpContextAccessor,Microsoft.AspNetCore.Authorization.IAuthorizationService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HealthGateway.ExternalClient.Controllers.UserProfileController"/> class.
+            </summary>
+            <param name="userProfileService">The injected user profile service.</param>
+            <param name="httpContextAccessor">The injected http context accessor provider.</param>
+            <param name="authorizationService">The injected authorization service.</param>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Controllers.UserProfileController.GetUserProfile(System.String)">
+            <summary>
+            Gets a user profile json.
+            </summary>
+            <returns>The user profile model wrapped in a request result.</returns>
+            <param name="hdid">The user hdid.</param>
+            <response code="200">Returns the user profile json.</response>
+            <response code="401">the client must authenticate itself to get the requested response.</response>
+            <response code="403">The client does not have access rights to the content; that is, it is unauthorized, so the server is refusing to give the requested resource. Unlike 401, the client's identity is known to the server.</response>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.CreateNoteRequest">
+            <summary>
+            Object that defines the request for creating a User.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.CreateNoteRequest.Text">
+            <summary>
+            Gets or sets the note text.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.CreateNoteRequest.Title">
+            <summary>
+            Gets or sets the note title.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.CreateNoteRequest.JournalDateTime">
+            <summary>
+            Gets or sets the note date.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.CreateNoteRequest.HdId">
+            <summary>
+            Gets or sets the user hdid.
+            </summary>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.CreateUserRequest">
+            <summary>
+            Object that defines the request for creating a User.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.CreateUserRequest.Profile">
+            <summary>
+            Gets or sets the user profile.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.CreateUserRequest.InviteCode">
+            <summary>
+            Gets or sets the code used to validate if the user has an invite.
+            </summary>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.ExternalConfiguration">
+            <summary>
+            A collection of configuration items for use by Health Gateway and
+            approved applications.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.ExternalConfiguration.OpenIdConnect">
+            <summary>
+            Gets or sets the OpenIdConnect configuration.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.ExternalConfiguration.IdentityProviders">
+            <summary>
+            Gets or sets the List of Identity providers.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.ExternalConfiguration.ExternalClient">
+            <summary>
+            Gets or sets the Health Gateway Externalclient specific configuration.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.ExternalConfiguration.ServiceEndpoints">
+            <summary>
+            Gets or sets the Service Endpoints.
+            </summary>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.IdentityProviderConfiguration">
+            <summary>
+            An object representing a configured Health Gateway IdentityProvider.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.IdentityProviderConfiguration.Id">
+            <summary>
+            Gets or sets the Id of the Identity Provider.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.IdentityProviderConfiguration.Name">
+            <summary>
+            Gets or sets the name of the Identity Provider.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.IdentityProviderConfiguration.Icon">
+            <summary>
+            Gets or sets the Font Awesome Icon that we recommend to use.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.IdentityProviderConfiguration.Hint">
+            <summary>
+            Gets or sets the Identity Provider hint.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.IdentityProviderConfiguration.Disabled">
+            <summary>
+            Gets or sets a value indicating whether this identity provider
+            should be used.
+            </summary>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.OpenIdConnectConfiguration">
+            <summary>
+            Configuration to be used by external clients for authentication.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.OpenIdConnectConfiguration.Authority">
+            <summary>
+            Gets or sets the OpenIDConnect Authority.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.OpenIdConnectConfiguration.ClientId">
+            <summary>
+            Gets or sets the OpenIdConnect Client ID.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.OpenIdConnectConfiguration.ResponseType">
+            <summary>
+            Gets or sets the OpenIDConnect Response types.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.OpenIdConnectConfiguration.Scope">
+            <summary>
+            Gets or sets the OpenIDConnect Scopes.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.OpenIdConnectConfiguration.Callbacks">
+            <summary>
+            Gets or sets the Callback URIs.
+            </summary>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.TermsOfServiceModel">
+            <summary>
+            Model that provides a user representation of an EmailInvite.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.TermsOfServiceModel.Id">
+            <summary>
+            Gets or sets the terms of service id.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.TermsOfServiceModel.Content">
+            <summary>
+            Gets or sets the terms of service html.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.TermsOfServiceModel.EffectiveDate">
+            <summary>
+            Gets or sets the date the terms of service becomes active.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Models.TermsOfServiceModel.CreateFromDbModel(HealthGateway.Database.Models.LegalAgreement)">
+            <summary>
+            Constructs a TermsOfService model from a LegalAgreement database model.
+            </summary>
+            <param name="model">The legal agreement database model.</param>
+            <returns>The terms of service model.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.TimeOutsConfiguration">
+            <summary>
+            Various timeout values used by the VUE ExternalClient application.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.TimeOutsConfiguration.Idle">
+            <summary>
+            Gets or sets the idle time in seconds that the Externalclient will use
+            before it automatically logs the user out.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.TimeOutsConfiguration.LogoutRedirect">
+            <summary>
+            Gets or sets the amount of time in seconds after which the user will be
+            redirected from the logout page back to the home.
+            </summary>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.UserComment">
+            <summary>
+            Model that provides a user representation of an user profile database model.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserComment.Id">
+            <summary>
+            Gets or sets the id.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserComment.UserProfileId">
+            <summary>
+            Gets or sets the user hdid.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserComment.Text">
+            <summary>
+            Gets or sets the text of the comment.
+            Text supports 1000 characters plus 344 for Encryption and Encoding overhead.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserComment.EntryTypeCode">
+            <summary>
+            Gets or sets the entry type code.
+            The value is one of <see cref="T:HealthGateway.Database.Constants.CommentEntryType"/>.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserComment.ParentEntryId">
+            <summary>
+            Gets or sets the related event id.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserComment.Version">
+            <summary>
+            Gets or sets the comment db version.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserComment.CreatedDateTime">
+            <summary>
+            Gets or sets the datetime the entity was created.
+            This is generally set by the baseDbContext.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserComment.CreatedBy">
+            <summary>
+            Gets or sets the user/system that created the entity.
+            This is generally set by the baseDbContext.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserComment.UpdatedDateTime">
+            <summary>
+            Gets or sets the datetime the entity was updated.
+            This is generally set by the baseDbContext.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserComment.UpdatedBy">
+            <summary>
+            Gets or sets the user/system that created the entity.
+            This is generally set by the baseDbContext.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Models.UserComment.ToDbModel(HealthGateway.Common.Delegates.ICryptoDelegate,System.String)">
+            <summary>
+            Constructs a database comment model from a user Node model.
+            </summary>
+            <param name="cryptoDelegate">Crypto delegate to decrypt comment.</param>
+            <param name="key">The security key.</param>
+            <returns>The database user comment model.</returns>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Models.UserComment.CreateFromDbModel(HealthGateway.Database.Models.Comment,HealthGateway.Common.Delegates.ICryptoDelegate,System.String)">
+            <summary>
+            Constructs a UserComment model from a Node database model.
+            </summary>
+            <param name="model">The comment database model.</param>
+            <param name="cryptoDelegate">Crypto delegate to decrypt comment.</param>
+            <param name="key">The security key.</param>
+            <returns>The user comment model.</returns>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Models.UserComment.CreateListFromDbModel(System.Collections.Generic.IEnumerable{HealthGateway.Database.Models.Comment},HealthGateway.Common.Delegates.ICryptoDelegate,System.String)">
+            <summary>
+            Constructs a List of UserComment models from a List of Node database models.
+            </summary>
+            <param name="models">The list of comment database model.</param>
+            <param name="cryptoDelegate">Crypto delegate to decrypt comment.</param>
+            <param name="key">The security key.</param>
+            <returns>A list of use comments.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.UserEmailInvite">
+            <summary>
+            Model that provides a user representation of an EmailInvite.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserEmailInvite.Id">
+            <summary>
+            Gets or sets the email invite id.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserEmailInvite.HdId">
+            <summary>
+            Gets or sets the users directed identifier.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserEmailInvite.Validated">
+            <summary>
+            Gets or sets a value indicating whether the invite was validated.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserEmailInvite.EmailId">
+            <summary>
+            Gets or sets the associated email that was sent for this invite.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserEmailInvite.EmailAddress">
+            <summary>
+            Gets or sets the associated email that was sent for this invite.
+            </summary>
+            <summary>
+            Gets or sets the email address for the invite.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Models.UserEmailInvite.CreateFromDbModel(HealthGateway.Database.Models.EmailInvite)">
+            <summary>
+            Constructs a UserInviteEmail from a EmailInvite.
+            </summary>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.UserNote">
+            <summary>
+            Model that provides a user representation of an user profile database model.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserNote.Id">
+            <summary>
+            Gets or sets the id.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserNote.HdId">
+            <summary>
+            Gets or sets the user hdid.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserNote.Title">
+            <summary>
+            Gets or sets the title.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserNote.Text">
+            <summary>
+            Gets or sets the text of the note.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserNote.JournalDateTime">
+            <summary>
+            Gets or sets the Note timeline datetime.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserNote.Version">
+            <summary>
+            Gets or sets the note db version.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserNote.CreatedDateTime">
+            <summary>
+            Gets or sets the datetime the entity was created.
+            This is generally set by the baseDbContext.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserNote.CreatedBy">
+            <summary>
+            Gets or sets the user/system that created the entity.
+            This is generally set by the baseDbContext.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserNote.UpdatedDateTime">
+            <summary>
+            Gets or sets the datetime the entity was updated.
+            This is generally set by the baseDbContext.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserNote.UpdatedBy">
+            <summary>
+            Gets or sets the user/system that created the entity.
+            This is generally set by the baseDbContext.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Models.UserNote.ToDbModel(HealthGateway.Common.Delegates.ICryptoDelegate,System.String)">
+            <summary>
+            Constructs a database Note model from a user Node model.
+            </summary>
+            <param name="cryptoDelegate">Crypto delegate to decrypt note.</param>
+            <param name="key">The security key.</param>
+            <returns>The database user note model.</returns>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Models.UserNote.CreateFromDbModel(HealthGateway.Database.Models.Note,HealthGateway.Common.Delegates.ICryptoDelegate,System.String)">
+            <summary>
+            Constructs a UserNote model from a Node database model.
+            </summary>
+            <param name="model">The note database model.</param>
+            <param name="cryptoDelegate">Crypto delegate to decrypt note.</param>
+            <param name="key">The security key.</param>
+            <returns>The user note model.</returns>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Models.UserNote.CreateListFromDbModel(System.Collections.Generic.IEnumerable{HealthGateway.Database.Models.Note},HealthGateway.Common.Delegates.ICryptoDelegate,System.String)">
+            <summary>
+            Constructs a List of UserNote models from a List of Node database models.
+            </summary>
+            <param name="models">The list of note database model.</param>
+            <param name="cryptoDelegate">Crypto delegate to decrypt note.</param>
+            <param name="key">The security key.</param>
+            <returns>A list of use notes.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.UserProfileModel">
+            <summary>
+            Model that provides a user representation of an user profile database model.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserProfileModel.HdId">
+            <summary>
+            Gets or sets the user hdid.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserProfileModel.AcceptedTermsOfService">
+            <summary>
+            Gets or sets a value indicating whether the user accepted the terms of service.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserProfileModel.Email">
+            <summary>
+            Gets or sets the user email.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserProfileModel.HasTermsOfServiceUpdated">
+            <summary>
+            Gets or sets a value indicating whether the user needs to be notified about new terms of service.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserProfileModel.LastLoginDateTime">
+            <summary>
+            Gets or sets the value indicating the date when the user last logon.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.UserProfileModel.ClosedDateTime">
+            <summary>
+            Gets or sets the Closed datetime of the account.
+            After an account has been closed for n amount of days the row is physically deleted.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Models.UserProfileModel.CreateFromDbModel(HealthGateway.Database.Models.UserProfile)">
+            <summary>
+            Constructs a UserProfile model from a UserProfile database model.
+            </summary>
+            <param name="model">The user profile database model.</param>
+            <returns>The user profile model.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Models.ExternalClientConfiguration">
+            <summary>
+            Configuration data to be used by the Health Gateway Externalclient.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.ExternalClientConfiguration.LogLevel">
+            <summary>
+            Gets or sets the logging level used by the Externalclient.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.ExternalClientConfiguration.Timeouts">
+            <summary>
+            Gets or sets the Externalclient timeout values.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.ExternalClientConfiguration.RegistrationStatus">
+            <summary>
+            Gets or sets the Externalclient registration status.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.ExternalClientConfiguration.ExternalURLs">
+            <summary>
+            Gets or sets the ExternalURLs used by the Externalclient.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.ExternalClientConfiguration.Modules">
+            <summary>
+            Gets or sets the state for each of our modules.
+            </summary>
+        </member>
+        <member name="P:HealthGateway.ExternalClient.Models.ExternalClientConfiguration.HoursForDeletion">
+            <summary>
+            Gets or sets the number of hours until an account is removed after being closed.
+            </summary>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Program">
+            <summary>
+            The entry point for the project.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Program.Main(System.String[])">
+            <summary>.
+            The entry point for the class.
+            </summary>
+            <param name="args">The command line arguments to be passed in.</param>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Program.CreateHostBuilder(System.String[])">
+            <summary>.
+            Creates the IWebHostBuilder.
+            </summary>
+            <param name="args">The command line arguments to be passed in.</param>
+            <returns>Returns the configured webhost.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Services.ConfigurationService">
+            <summary>
+            Provides external configuration data.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Services.ConfigurationService.#ctor(Microsoft.Extensions.Logging.ILogger{HealthGateway.ExternalClient.Services.ConfigurationService},Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HealthGateway.ExternalClient.Services.ConfigurationService"/> class.
+            </summary>
+            <param name="logger">Injected Logger Provider.</param>
+            <param name="configuration">Injected Configuration Provider.</param>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Services.ConfigurationService.GetConfiguration">
+            <summary>
+            Reads the external configuration and returns it to the caller.
+            </summary>
+            <returns>The external configuration data.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Services.IConfigurationService">
+            <summary>
+            Externalclient configuration.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Services.IConfigurationService.GetConfiguration">
+            <summary>
+            Creates and returns Configuration data for clients.
+            </summary>
+            <returns>The Config object containing configuration elements useful for client consumption.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Services.IUserProfileService">
+            <summary>
+            The User Profile service.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Services.IUserProfileService.GetUserProfile(System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Gets the user profile model.
+            </summary>
+            <param name="hdid">The requested user hdid.</param>
+            <param name="lastLogin">The date of last login performed by the user.</param>
+            <returns>The wrappeed user profile.</returns>
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Services.UserProfileService">
+            <inheritdoc />
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Services.UserProfileService.#ctor(Microsoft.Extensions.Logging.ILogger{HealthGateway.ExternalClient.Services.UserProfileService},HealthGateway.ExternalClient.Services.IConfigurationService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HealthGateway.ExternalClient.Services.UserProfileService"/> class.
+            </summary>
+            <param name="logger">Injected Logger Provider.</param>
+            <param name="configuration">The configuration service.</param>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Services.UserProfileService.GetUserProfile(System.String,System.Nullable{System.DateTime})">
+            <inheritdoc />
+        </member>
+        <member name="T:HealthGateway.ExternalClient.Startup">
+            <summary>
+            Configures the application during startup.
+            </summary>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Startup.#ctor(Microsoft.AspNetCore.Hosting.IWebHostEnvironment,Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HealthGateway.ExternalClient.Startup"/> class.
+            </summary>
+            <param name="env">The environment variables provider.</param>
+            <param name="configuration">The injected configuration provider.</param>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+            <param name="services">The injected services provider.</param>
+        </member>
+        <member name="M:HealthGateway.ExternalClient.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app">The application builder.</param>
+            <param name="env">The hosting environment.</param>
+        </member>
+    </members>
+</doc>

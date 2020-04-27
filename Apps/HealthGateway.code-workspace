@@ -47,7 +47,11 @@
     {
       "name": "Dolphin",
       "path": "/home/dev/Development/HealthGateway/Tools/Dolphin"
-    }
+    },
+	{
+      "name": "ExternalClient",
+      "path": "ExternalClient"
+    },
   ],
   "settings": {}
 }

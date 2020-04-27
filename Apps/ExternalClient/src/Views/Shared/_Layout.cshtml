@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="Description" content="Author: BCGov, Health Gateway of British Columbia">
+    <title>@ViewData["Title"] - Health Gateway</title>
+    <base href="~/" />
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/dist/vendor.css" asp-append-version="true" />
+    </environment>
+    <environment include="Production">
+        <link rel="stylesheet" href="~/dist/vendor.css.gz" asp-append-version="true" />
+        <link rel="stylesheet" href="~/dist/site.css.gz" asp-append-version="true" />
+    </environment>
+</head>
+<body class="d-flex flex-column">
+
+    @RenderBody()
+
+    <script src="~/dist/vendor.js.gz" asp-append-version="true"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
