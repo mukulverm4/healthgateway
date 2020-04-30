@@ -23,10 +23,11 @@
           align="center"
         >
           <h3 slot="header">Log In</h3>
+          <!--
           <p v-if="hasMultipleProviders || isRetry" slot="footer">
             Not yet registered?
             <b-link to="/registrationInfo">Sign up</b-link>
-          </p>
+          </p> -->
           <b-card-body v-if="hasMultipleProviders || isRetry">
             <div v-for="provider in identityProviders" :key="provider.id">
               <b-row>
@@ -107,14 +108,14 @@ export default class LoginComponent extends Vue {
     if (this.$route.query.redirect && this.$route.query.redirect !== "") {
       this.redirectPath = this.$route.query.redirect.toString();
     } else {
-      this.redirectPath = "/timeline";
+      this.redirectPath = "/profile";
     }
 
     this.routeHandler = this.$router;
     if (this.oidcIsAuthenticated && this.userIsRegistered) {
       this.routeHandler.push({ path: this.redirectPath });
     } else if (this.oidcIsAuthenticated) {
-      this.redirectPath = "/registrationInfo";
+      this.redirectPath = "/profile";
       this.routeHandler.push({ path: this.redirectPath });
     } else if (
       !this.oidcIsAuthenticated &&

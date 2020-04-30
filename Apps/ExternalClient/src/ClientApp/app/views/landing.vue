@@ -60,8 +60,8 @@
     }
   }
 
-  .devices-section {
-    .devices-image {
+  .covid-section {
+    .covid-image {
       margin-left: auto;
       margin-right: auto;
       margin-top: -75px;
@@ -213,38 +213,16 @@
       <b-col class="col-12 col-md-5 col-xl-6 d-none d-md-block" />
       <b-col class="col-12 col-md-6 col-xl-4">
         <div class="title-wrapper p-4">
-          <img
-            class="img-fluid logo d-block mx-auto"
-            :src="logo"
-            width="auto"
-            height="auto"
-            alt="B.C. Government Logo"
-          />
 
-          <div class="title-text my-4 mx-auto">
-            <div>
-              Empowering you
-            </div>
-            <div>to manage your health</div>
-          </div>
           <b-row class="">
             <b-col class="justify-content-center align align-items-center">
               <b-row>
                 <b-button
-                  id="btnStart"
-                  to="registrationInfo"
-                  class="btn btn-primary-landing mx-auto register-button w-100"
-                  role="button"
-                  >Register</b-button
-                >
-              </b-row>
-              <b-row>
-                <b-button
                   id="btnLogin"
                   to="login"
-                  class="register-link mx-auto"
-                  variant="link"
-                  >Already registered? <strong>Login</strong></b-button
+                  class="btn btn-primary-landing mx-auto register-button w-100"
+                  role="button"
+                  >Connect your HealthGateway Account</b-button
                 >
               </b-row>
             </b-col>
@@ -253,30 +231,24 @@
       </b-col>
     </b-row>
     <b-row
-      class="devices-section justify-content-center align-items-center mx-1 mx-md-5"
+      class="covid-section justify-content-center align-items-center mx-1 mx-md-5"
     >
       <b-col class="d-none d-md-block text-center col-6 col-xl-4 m-auto">
         <img
-          class="img-fluid devices-image"
-          :src="devices"
+          class="img-fluid covid-image"
+          :src="covid"
           width="auto"
           height="auto"
-          alt="Devices"
-      /></b-col>
+          alt="Covid"
+      />
+      </b-col>
       <b-col class="col-10 col-md-6">
         <div class="devices-text my-5 my-md-5 ml-md-5">
-          <h3>Browse your health records</h3>
+          <h3>Connect to your HealthGatewy Account</h3>
           <div>
-            Prescription medications
+            To see your COVID-19 Test Results here.
           </div>
-          <div>
-            Visits to clinics <span class="font-italic">(coming soon)</span>
           </div>
-          <div>
-            Lab test results <span class="font-italic">(coming soon)</span>
-          </div>
-          <div>Vaccinations <span class="font-italic">(coming soon)</span></div>
-        </div>
       </b-col>
     </b-row>
     <b-row class="circle-icons justify-content-center">
@@ -365,6 +337,7 @@ import Image04 from "@/assets/images/landing/004_AdobeStock_216356596.jpeg";
 import Image05 from "@/assets/images/landing/005_AdobeStock_243861557.jpeg";
 import Image06 from "@/assets/images/landing/006_AdobeStock_223963895.jpeg";
 import Image07 from "@/assets/images/landing/007_Hero-02_Duotone.png";
+import Image08 from "@/assets/images/landing/008_COVID.jpg";
 
 import {
   faPills,
@@ -435,6 +408,7 @@ export default class LandingComponent extends Vue {
   private logo: string = Image00;
   private introBackground: string = Image01;
   private devices: string = Image02;
+  private covid: string = Image08;
   private bottomImage: string = Image07;
 
   private getTileClass(index: number): string {

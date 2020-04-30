@@ -261,7 +261,7 @@ input {
               size="lg"
               variant="primary"
               :class="{ disabled: !accepted }"
-              >Register</b-button
+              >Connect with your BC Health Gateway Account</b-button
             >
           </b-col>
         </b-row>
@@ -479,7 +479,7 @@ export default class RegistrationComponent extends Vue {
           this.checkRegistration({ hdid: this.oidcUser.hdid }).then(
             (isRegistered: boolean) => {
               if (isRegistered) {
-                this.$router.push({ path: "/timeline" });
+                this.$router.push({ path: "/profile" });
               } else {
                 this.hasErrors = true;
               }
