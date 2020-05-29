@@ -92,6 +92,27 @@ export class RestMedicationService implements IMedicationService {
     });
   }
 
+  public getMedicationListInformation(
+    drugIdentifierList: string[]
+  ): Promise<Dictionary<MedicationResult>> {
+    return new Promise((resolve, reject) => {
+      var arrStr = JSON.stringify(
+        drugIdentifierList.map(d => `drugIdentifiers=${d}`).join("&")
+      );
+      return this.http
+        .getWithCors<RequestResult<MedicationResult[]>>(
+          `${this.baseUri}${this.MEDICATION_BASE_URI}?${arrStr}}`
+        )
+        .then(requestResult => {
+          this.handleResult(requestResult, resolve, reject);
+        })
+        .catch(err => {
+          console.log(this.FETCH_ERROR + err.toString());
+          reject(err);
+        });
+    });
+  }
+
   public getPharmacyInfo(pharmacyId: string): Promise<Pharmacy> {
     return new Promise((resolve, reject) => {
       this.http

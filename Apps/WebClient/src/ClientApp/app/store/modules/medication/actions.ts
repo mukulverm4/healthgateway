@@ -5,6 +5,7 @@ import { SERVICE_IDENTIFIER } from "@/plugins/inversify";
 import container from "@/plugins/inversify.config";
 import { RootState, MedicationState } from "@/models/storeState";
 import MedicationResult from "@/models/medicationResult";
+import { Dictionary } from "vue-router/types/router";
 
 function handleError(commit: Commit, error: Error) {
   console.log("ERROR:" + error);
@@ -37,6 +38,25 @@ export const actions: ActionTree<MedicationState, RootState> = {
             reject(error);
           });
       }
+    });
+  },
+  getMedicationList(
+    { commit, getters },
+    { dinList }
+  ): Promise<Dictionary<MedicationResult>> {
+    return new Promise((resolve, reject) => {
+      console.log("Retrieving Medication info");
+      medicationService
+        .getMedicationListInformation(dinList)
+        .then(medicationData => {
+          //console.log("Medication Data: ", requestResult);
+          //commit("addMedicationData", medicationData);
+          resolve(medicationData);
+        })
+        .catch(error => {
+          handleError(commit, error);
+          reject(error);
+        });
     });
   }
 };

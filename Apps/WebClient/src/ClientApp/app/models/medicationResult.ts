@@ -31,6 +31,7 @@ class DrugProduct {
   public activeIngredient?: ActiveIngredient;
   public form?: Form;
   public company?: Company;
+  public therapeuticClass?: TherapeuticClass;
 }
 
 class ActiveIngredient {
@@ -80,6 +81,22 @@ class Company {
   public provinceFrench?: string;
   public streetName?: string;
   public suiteNumber?: string;
+}
+
+class TherapeuticClass {
+  public id?: string;
+  public atcNumber?: string;
+  public atc?: string;
+  public atcFrench?: string;
+  public ahfsNumber?: string;
+  public ahfs?: string;
+  public ahfsFrench?: string;
+  public drugProductId?: string;
+  public createdBy?: string;
+  public createdDateTime?: string;
+  public updatedBy?: string;
+  public updatedDateTime?: string;
+  public version?: string;
 }
 
 class ProvincialDrugSource {

@@ -54,6 +54,7 @@ namespace HealthGateway.Database.Delegates
                                         .Include(c => c.Company)
                                         .Include(a => a.ActiveIngredient)
                                         .Include(f => f.Form)
+                                        .Include(f => f.TherapeuticClass)
                         .ToList();
 
             this.logger.LogDebug($"Finished getting list of drug products from DB. {JsonSerializer.Serialize(retVal)}");

@@ -59,6 +59,9 @@ export interface IMedicationService {
     protectiveWord?: string
   ): Promise<RequestResult<MedicationStatement[]>>;
   getMedicationInformation(drugIdentifier: string): Promise<MedicationResult>;
+  getMedicationListInformation(
+    drugIdentifierList: string[]
+  ): Promise<Dictionary<MedicationResult>>;
   getPharmacyInfo(pharmacyId: string): Promise<Pharmacy>;
 }
 

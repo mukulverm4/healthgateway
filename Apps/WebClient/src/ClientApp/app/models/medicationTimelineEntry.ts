@@ -99,6 +99,7 @@ class MedicationViewModel {
   public strengthUnit?: string;
   public manufacturer?: string;
   public isPin!: boolean;
+  public atcNumber: string = "";
   constructor(model: MedicationSumary) {
     this.din = model.din ? model.din : "";
     this.brandName = model.brandName;
@@ -125,6 +126,10 @@ class MedicationViewModel {
 
       this.manufacturer = federalModel.drugProduct!.company!.companyName
         ? federalModel.drugProduct!.company!.companyName
+        : "";
+
+      this.atcNumber = federalModel.drugProduct!.therapeuticClass!.atcNumber
+        ? federalModel.drugProduct!.therapeuticClass!.atcNumber
         : "";
     } else if (model.provincialData) {
       let provincialModel = model.provincialData;

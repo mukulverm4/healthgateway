@@ -35,6 +35,9 @@ const ValidateEmailComponent = () =>
 const TermsOfServiceComponent = () =>
   import(/* webpackChunkName: "termsOfService" */ "@/views/termsOfService.vue");
 
+const TimelineComponent2 = () =>
+  import(/* webpackChunkName: "timeline2" */ "@/views/timeline2.vue");
+
 Vue.use(VueRouter);
 
 const REGISTRATION_PATH = "/registration";
@@ -78,6 +81,11 @@ const routes = [
   {
     path: "/timeline",
     component: TimelineComponent,
+    meta: { requiresRegistration: true, roles: ["user"] }
+  },
+  {
+    path: "/timeline2",
+    component: TimelineComponent2,
     meta: { requiresRegistration: true, roles: ["user"] }
   },
   {

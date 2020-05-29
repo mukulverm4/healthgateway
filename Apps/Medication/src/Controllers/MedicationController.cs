@@ -85,9 +85,10 @@ namespace HealthGateway.Medication.Controllers
         /// <response code="200">Returns the medication statement bundle.</response>
         [HttpGet("")]
         [Produces("application/json")]
-        public RequestResult<Dictionary<string, MedicationResult>> GetMedications([FromQuery]List<string> drugIdentifiers)
+        public RequestResult<Dictionary<string, MedicationResult>> GetMedications([FromQuery] List<string> drugIdentifiers)
         {
             // The database requires the dins to be the same size and padded with zeroes on the left
+            //List<string> dinList = new List<string>(drugIdentifiers.Split(','));
             List<string> paddedDinList = drugIdentifiers.Select(x => x.PadLeft(8, '0')).ToList();
             Dictionary<string, MedicationResult> medications = this.medicationService.GetMedications(paddedDinList);
 
