@@ -137,6 +137,7 @@ class MedicationViewModel {
       this.form = provincialModel.pharmaCareDrug
         ? provincialModel.pharmaCareDrug.dosageForm
         : "";
+      this.atcNumber = "X";
     }
   }
 }

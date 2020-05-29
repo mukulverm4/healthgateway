@@ -99,7 +99,7 @@
           </span>
         </b-alert>
         <div id="pageTitle">
-          <h1 id="subject">Health patterns</h1>
+          <h1 id="subject">Health Insights</h1>
           <hr />
         </div>
         <br />
@@ -483,6 +483,8 @@ export default class TherapeuticClassificationComponent extends Vue {
         return "Sensory organs";
       case "V":
         return "Various";
+      case "X":
+        return "PIN - BC Provincial";
       default:
         return "Unknown";
     }
@@ -550,7 +552,7 @@ export default class TherapeuticClassificationComponent extends Vue {
       labels: [],
       datasets: [
         {
-          label: "By month",
+          label: "Medications",
           backgroundColor: "#f87979",
           data: []
         }
