@@ -460,7 +460,6 @@ export default class CommunicationView extends Vue {
             })
             .finally(() => {
                 this.isLoading = false;
-                console.log(this.invalidDates);
             });
     }
 
