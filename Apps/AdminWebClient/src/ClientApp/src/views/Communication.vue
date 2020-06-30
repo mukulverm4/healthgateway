@@ -216,12 +216,14 @@ import moment from "moment";
 
 extend("dateValid", {
     validate(value: any, args: any) {
-        if (moment(args.effective).isBefore(moment(args.expiry))) {
-            return true;
+        if (!moment(args.effective).isBefore(moment(args.expiry))) {
+            return "Effective date must occur before expiry date.";
+        } else if (!args.noOverlap) {
+            return "Date range must not overlap another date range.";
         }
-        return "Effective date must occur before expiry date.";
+        return true;
     },
-    params: ["effective", "expiry"]
+    params: ["effective", "expiry", "noOverlap"]
 });
 
 @Component({
@@ -241,6 +243,7 @@ export default class CommunicationView extends Vue {
         title: "",
         message: ""
     };
+    private invalidDates: any = [];
     private dialog: boolean = false;
     private editedIndex: number = -1;
 
@@ -261,7 +264,14 @@ export default class CommunicationView extends Vue {
     }
 
     private dateTimeRules(effective: Date, expiry: Date) {
-        return "dateValid:" + effective.toString() + "," + expiry.toString();
+        return (
+            "dateValid:" +
+            effective.toString() +
+            "," +
+            expiry.toString() +
+            "," +
+            this.validateRanges(effective, expiry)
+        );
     }
 
     private editedItem: Communication = {
@@ -319,8 +329,14 @@ export default class CommunicationView extends Vue {
     }
 
     private dateTimeValid(): boolean {
-        return moment(this.editedItem.effectiveDateTime).isBefore(
-            moment(this.editedItem.expiryDateTime)
+        return (
+            moment(this.editedItem.effectiveDateTime).isBefore(
+                moment(this.editedItem.expiryDateTime)
+            ) &&
+            this.validateRanges(
+                this.editedItem.effectiveDateTime,
+                this.editedItem.expiryDateTime
+            )
         );
     }
 
@@ -401,12 +417,38 @@ export default class CommunicationView extends Vue {
         return this.communicationList;
     }
 
+    private createDateRanges(items: Communication[]): void {
+        let dateRanges: any[] = [];
+        items.forEach((item: Communication) => {
+            dateRanges.push({
+                effective: item.effectiveDateTime,
+                expiry: item.expiryDateTime
+            });
+        });
+        this.invalidDates = dateRanges;
+    }
+
+    private validateRanges(effective: Date, expiry: Date): boolean {
+        this.invalidDates.forEach((range: any) => {
+            if (
+                !(
+                    moment(effective).isBefore(moment(range.expiry)) &&
+                    moment(expiry).isAfter(moment(range.effective))
+                )
+            ) {
+                return false;
+            }
+        });
+        return true;
+    }
+
     private loadCommunicationList() {
         console.log("retrieving communications...");
         this.communicationService
             .getAll()
             .then((banners: Communication[]) => {
                 this.communicationList = banners;
+                this.createDateRanges(banners);
             })
             .catch((err: any) => {
                 this.showFeedback = true;
@@ -418,6 +460,7 @@ export default class CommunicationView extends Vue {
             })
             .finally(() => {
                 this.isLoading = false;
+                console.log(this.invalidDates);
             });
     }
 
