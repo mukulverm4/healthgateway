@@ -30,6 +30,7 @@ jobs:
           dotnet sonarscanner begin \
             /d:sonar.verbose=false \
             /k:"commonlibrary_dev" \
+            /n:"Azure Common Library" \
             /d:sonar.host.url="https://sonarqube-gateway.pathfinder.gov.bc.ca" \
             /d:sonar.login="$(sonar.login)" \
             /d:sonar.scm.disabled="true" \
@@ -68,6 +69,7 @@ jobs:
           dotnet sonarscanner begin \
             /d:sonar.verbose=false \
             /k:"databaselibrary_dev" \
+            /n:"Azure Database Library" \
             /d:sonar.host.url="https://sonarqube-gateway.pathfinder.gov.bc.ca" \
             /d:sonar.login="$(sonar.login)" \
             /d:sonar.scm.disabled="true" \
@@ -113,9 +115,11 @@ jobs:
             /p:CoverletOutputFormat=opencover \
             --logger:"xunit;LogFileName=results.xml" \
             -r ./xUnitResults 
+          npm --prefix src/ClientApp test
           dotnet sonarscanner begin \
             /d:sonar.verbose=false \
             /k:"webclient_dev" \
+            /n:"Azure WebClient" \
             /d:sonar.host.url="https://sonarqube-gateway.pathfinder.gov.bc.ca" \
             /d:sonar.login="$(sonar.login)" \
             /d:sonar.coverage.exclusions="**Tests*.cs, **test*.ts, **/Common/**, **/Startup.cs, **/Program.cs" \
@@ -133,6 +137,48 @@ jobs:
       - script: |
           curl '-X' POST '-H' 'Content-Type: application/json' '--data' '{"icon_emoji":":cloud_lightning:","text":"WebClient Analysis Failed."}' https://chat.pathfinder.gov.bc.ca/hooks/WEHBAtxe6ufWYj2FR/2MMMbS9btPZxtrbgPckiuCqqLzsnEuuWmozKjtY8fXrWHjoa
         displayName: 'WebClient - On Fail'
+        condition: failed()
+
+        # - task: DotNetCoreCLI@2
+      #   displayName: 'AdminWebClient- Run dotnet Tests'
+      #   inputs:
+      #     command: 'test'
+      #     projects: '$(Build.SourcesDirectory)/Apps/AdminWebClient/test/unit/AdminWebClientTests.csproj'
+      #     testRunTitle: 'AdminWebClient'
+      #   continueOnError: true
+
+      #    npm --prefix src/ClientApp test
+      #      /d:sonar.scm.disabled="true" \
+      #      /d:sonar.typescript.test.reportPaths="../sonar_reports/jest.out/lcov.info" \
+      - script: |
+          set -e
+          dotnet test \
+            test/unit/AdminWebClientTests.csproj \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=opencover \
+            --logger:"xunit;LogFileName=results.xml" \
+            -r ./xUnitResults 
+          dotnet sonarscanner begin \
+            /d:sonar.verbose=false \
+            /k:"adminwebclient_dev" \
+            /n:"Azure Admin WebClient" \
+            /d:sonar.host.url="https://sonarqube-gateway.pathfinder.gov.bc.ca" \
+            /d:sonar.login="$(sonar.login)" \
+            /d:sonar.coverage.exclusions="**Tests*.cs, **test*.ts, **/Common/**, **/Startup.cs, **/Program.cs" \
+            /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
+            /d:sonar.typescript.lcov.reportPaths="../sonar_reports/jest.out/lcov.info" \
+            /d:sonar.cs.xunit.reportsPaths="**/xUnitResults/results.xml" \
+            /d:sonar.test.inclusions="**/*.test.ts"
+          dotnet build    
+          dotnet sonarscanner end /d:sonar.login="$(sonar.login)"
+          echo "$@" >&2
+        displayName: 'AdminWebClient - Perform Static Code Analysis'
+        workingDirectory: $(Build.SourcesDirectory)/Apps/AdminWebClient
+        continueOnError: true
+
+      - script: |
+          curl '-X' POST '-H' 'Content-Type: application/json' '--data' '{"icon_emoji":":cloud_lightning:","text":"AdminWebClient Analysis Failed."}' https://chat.pathfinder.gov.bc.ca/hooks/WEHBAtxe6ufWYj2FR/2MMMbS9btPZxtrbgPckiuCqqLzsnEuuWmozKjtY8fXrWHjoa
+        displayName: 'AdminWebClient - On Fail'
         condition: failed()
 
 
@@ -156,6 +202,7 @@ jobs:
           dotnet sonarscanner begin \
             /d:sonar.verbose=false \
             /k:"Medicationservice_dev" \
+            /n:"Azure Medication Service" \
             /d:sonar.host.url="https://sonarqube-gateway.pathfinder.gov.bc.ca" \
             /d:sonar.login="$(sonar.login)" /d:sonar.scm.disabled="true" \
             /d:sonar.coverage.exclusions="**Tests*.cs, **/Common/**, **/Startup.cs, **/Program.cs" \
@@ -193,6 +240,7 @@ jobs:
           dotnet sonarscanner begin \
             /d:sonar.verbose=false \
             /k:"patientservice_dev" \
+            /n:"Azure Patient Service" \
             /d:sonar.host.url="https://sonarqube-gateway.pathfinder.gov.bc.ca" \
             /d:sonar.login="$(sonar.login)" \
             /d:sonar.scm.disabled="true" \
@@ -231,6 +279,7 @@ jobs:
           dotnet sonarscanner begin \
             /d:sonar.verbose=false \
             /k:"immsservice_dev" \
+            /n:"Azure Immunization Service" \
             /d:sonar.host.url="https://sonarqube-gateway.pathfinder.gov.bc.ca" \
             /d:sonar.login="$(sonar.login)" \
             /d:sonar.scm.disabled="true" \
@@ -269,6 +318,7 @@ jobs:
           dotnet sonarscanner begin \
             /d:sonar.verbose=false \
             /k:"laboratoryservice_dev" \
+            /n:"Azure Laboratory Service" \
             /d:sonar.host.url="https://sonarqube-gateway.pathfinder.gov.bc.ca" \
             /d:sonar.login="$(sonar.login)" \
             /d:sonar.scm.disabled="true" \
