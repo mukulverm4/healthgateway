@@ -35,6 +35,7 @@ namespace HealthGateway.Common.Delegates
     public class RestNotificationSettingsDelegate : INotificationSettingsDelegate
     {
         private const string NotificationSettingsConfigSectionKey = "NotificationSettings";
+        private const string SubjectResourceHeader = "patient";
 
         private readonly ILogger logger;
         private readonly IHttpClientService httpClientService;
@@ -139,11 +140,14 @@ namespace HealthGateway.Common.Delegates
             };
             Stopwatch timer = new Stopwatch();
             timer.Start();
-            this.logger.LogTrace($"Sending Notification Settings to PHSA...");
+            this.logger.LogDebug($"Sending Notification Settings to PHSA...");
+            this.logger.LogTrace($"Bearer token: {bearerToken}");
             using HttpClient client = this.httpClientService.CreateDefaultHttpClient();
+            client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", bearerToken);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
+            client.DefaultRequestHeaders.Add(SubjectResourceHeader, notificationSettings.SubjectHdid);
             try
             {
                 Uri endpoint = new Uri(this.nsConfig.Endpoint);
@@ -155,6 +159,7 @@ namespace HealthGateway.Common.Delegates
                 };
                 string json = JsonSerializer.Serialize(notificationSettings, options);
                 using HttpContent content = new StringContent(json, Encoding.UTF8, MediaTypeNames.Application.Json);
+                this.logger.LogTrace($"Http content: {json}");
                 HttpResponseMessage response = await client.PutAsync(endpoint, content).ConfigureAwait(true);
                 string payload = await response.Content.ReadAsStringAsync().ConfigureAwait(true);
                 switch (response.StatusCode)
@@ -168,7 +173,7 @@ namespace HealthGateway.Common.Delegates
                         break;
                     case HttpStatusCode.BadRequest:
                         this.logger.LogError($"Error Details: {payload}");
-                        retVal.ResultMessage = $"Bad Request, HTTP Error {response.StatusCode}";
+                        retVal.ResultMessage = $"Bad Request, HTTP Error {response.StatusCode}\nDetails:\n{payload}";
                         break;
                     case HttpStatusCode.Forbidden:
                         this.logger.LogError($"Error Details: {payload}");

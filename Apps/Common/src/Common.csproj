@@ -1,18 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>    
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>HealthGateway.Common</RootNamespace>
     <Nullable>enable</Nullable>
     <LangVersion>8.0</LangVersion>
+    <WarningsAsErrors>CS8600;CS8602;CS8603</WarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DocumentationFile>bin\Debug\netcoreapp3.1\Common.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.8" />
+    <PackageReference Include="Hangfire.PostgreSql" Version="1.6.3" />
     <PackageReference Include="Macross.Json.Extensions" Version="1.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.2.0" />
@@ -30,8 +28,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="3.4.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="3.6.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -40,7 +38,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.OpenApi" Version="1.1.4" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,25 +52,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="stylecop.json" />
     <Content Remove="wwwroot\dist\vendor-manifest.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="stylecop.json" />
+    <AdditionalFiles Include="..\..\stylecop.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="AccessManagement\" />
     <Folder Include="AspNetConfiguration\" />
     <Folder Include="Auditing\" />
-    <Folder Include="Constants\" />
     <Folder Include="Delegates\" />
     <Folder Include="FileDownload\" />
     <Folder Include="Filters\" />
     <Folder Include="Jobs\" />
     <Folder Include="Models\" />
     <Folder Include="Services\" />
-    <Folder Include="Swagger\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\.editorconfig" />

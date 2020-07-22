@@ -49,10 +49,9 @@ namespace HealthGateway.Database.Delegates
         public Guid Insert(MessagingVerification messageVerification)
         {
             this.logger.LogTrace($"Inserting message verification to DB... {JsonSerializer.Serialize(messageVerification)}");
-            if (messageVerification.VerificationType == MessagingVerificationType.Email &&
-                (messageVerification.Email == null || messageVerification.EmailId == null))
+            if (messageVerification.VerificationType == MessagingVerificationType.Email && messageVerification.Email == null)
             {
-                throw new ArgumentException("Email/EmailId cannot be null when verification type is Email");
+                throw new ArgumentException("Email cannot be null when verification type is Email");
             }
             else if (messageVerification.VerificationType == MessagingVerificationType.SMS &&
                 (string.IsNullOrWhiteSpace(messageVerification.SMSNumber) || string.IsNullOrWhiteSpace(messageVerification.SMSValidationCode)))
@@ -67,10 +66,10 @@ namespace HealthGateway.Database.Delegates
         }
 
         /// <inheritdoc />
-        public MessagingVerification GetByInviteKey(Guid inviteKey)
+        public MessagingVerification? GetByInviteKey(Guid inviteKey)
         {
             this.logger.LogTrace($"Getting email invite from DB... {inviteKey}");
-            MessagingVerification retVal = this.dbContext
+            MessagingVerification? retVal = this.dbContext
                 .MessagingVerification
                 .Include(email => email.Email)
                 .Where(p => p.InviteKey == inviteKey && p.VerificationType == MessagingVerificationType.Email)
@@ -94,15 +93,20 @@ namespace HealthGateway.Database.Delegates
         }
 
         /// <inheritdoc />
-        public MessagingVerification GetLastForUser(string hdid, string messagingVerificationType = MessagingVerificationType.Email)
+        public MessagingVerification? GetLastForUser(string hdid, string messagingVerificationType)
         {
             this.logger.LogTrace($"Getting last messaging verification from DB for user... {hdid}");
-            MessagingVerification retVal = this.dbContext
+            MessagingVerification? retVal = this.dbContext
                 .MessagingVerification
                 .Include(email => email.Email)
                 .Where(p => p.HdId == hdid && p.VerificationType == messagingVerificationType)
                 .OrderByDescending(p => p.UpdatedDateTime)
                 .FirstOrDefault();
+
+            if (retVal != null && retVal.Deleted)
+            {
+                return null;
+            }
 
             this.logger.LogDebug($"Finished getting messaging verification from DB. {JsonSerializer.Serialize(retVal)}");
             return retVal;

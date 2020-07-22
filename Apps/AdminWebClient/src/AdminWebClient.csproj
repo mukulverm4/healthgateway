@@ -10,6 +10,7 @@
     <RootNamespace>HealthGateway.Admin</RootNamespace>
     <Nullable>enable</Nullable>
     <LangVersion>8.0</LangVersion>
+    <WarningsAsErrors>CS8600;CS8602;CS8603</WarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -17,14 +18,12 @@
   </PropertyGroup>  
 
   <ItemGroup>
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.8" />
-    <PackageReference Include="Hangfire.Postgresql" Version="1.6.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.0" />
     <PackageReference Include="UAParser" Version="3.1.43" />
     <PackageReference Include="VueCliMiddleware" Version="3.1.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="3.4.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="3.6.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -40,6 +39,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\src\Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SonarQubeSetting Include="sonar.stylecop.projectFilePath">
+      <Value>$(MSBuildProjectFullPath)/Server</Value>
+    </SonarQubeSetting>
   </ItemGroup>
 
   <ItemGroup>
@@ -71,7 +76,7 @@
     <!-- Include the newly-built files in the publish output -->
     <ItemGroup>
       <DistFiles Include="$(SpaRoot)dist\**" />
-      <ResolvedFileToPublish Include="@(DistFiles-&gt;'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
         <RelativePath>%(DistFiles.Identity)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </ResolvedFileToPublish>

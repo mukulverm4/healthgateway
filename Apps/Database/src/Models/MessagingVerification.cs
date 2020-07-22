@@ -47,7 +47,7 @@ namespace HealthGateway.Database.Models
         /// Gets or sets the associated email that was sent for this verification.
         /// Required if the VerificationType = MessagingVerificationType.Email.
         /// </summary>
-        public Guid EmailId { get; set; }
+        public Guid? EmailId { get; set; }
 
         /// <summary>
         /// Gets or sets the associated email for this verification.
@@ -85,5 +85,17 @@ namespace HealthGateway.Database.Models
         /// </summary>
         [Required]
         public DateTime ExpireDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the attemped verification count.
+        /// </summary>
+        [Required]
+        public int VerificationAttempts { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the messageing verification was deleted.
+        /// </summary>
+        [Required]
+        public bool Deleted { get; set; }
     }
 }

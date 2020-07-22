@@ -16,11 +16,8 @@
 namespace HealthGateway.AdminWebClient
 {
     using System.IdentityModel.Tokens.Jwt;
-    using System.Net;
     using System.Security.Claims;
     using System.Threading.Tasks;
-    using Hangfire;
-    using Hangfire.PostgreSql;
     using HealthGateway.Admin.Services;
     using HealthGateway.Common.AspNetConfiguration;
     using HealthGateway.Common.Authorization.Admin;
@@ -67,7 +64,7 @@ namespace HealthGateway.AdminWebClient
         /// <param name="services">The injected services provider.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            //To show detail of error and see the problem.
+            // To show detail of error and see the problem.
             IdentityModelEventSource.ShowPII = true;
 
             this.logger.LogDebug("Configure Services...");
@@ -77,6 +74,7 @@ namespace HealthGateway.AdminWebClient
             this.startupConfig.ConfigureAuditServices(services);
             this.ConfigureAuthenticationService(services);
             this.startupConfig.ConfigureSwaggerServices(services);
+            this.startupConfig.ConfigureHangfireQueue(services);
 
             // Add services
             services.AddTransient<IConfigurationService, ConfigurationService>();
@@ -93,8 +91,9 @@ namespace HealthGateway.AdminWebClient
             services.AddTransient<IEmailDelegate, DBEmailDelegate>();
             services.AddTransient<IMessagingVerificationDelegate, DBMessagingVerificationDelegate>();
             services.AddTransient<IFeedbackDelegate, DBFeedbackDelegate>();
-            services.AddTransient<IProfileDelegate, DBProfileDelegate>();
+            services.AddTransient<IUserProfileDelegate, DBProfileDelegate>();
             services.AddTransient<ICommunicationDelegate, DBCommunicationDelegate>();
+            services.AddTransient<INoteDelegate, DBNoteDelegate>();
 
             // Configure SPA
             services.AddControllersWithViews();
@@ -104,9 +103,6 @@ namespace HealthGateway.AdminWebClient
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-
-            services.AddHangfire(x => x.UsePostgreSqlStorage(this.configuration.GetConnectionString("GatewayConnection")));
-            JobStorage.Current = new PostgreSqlStorage(this.configuration.GetConnectionString("GatewayConnection"));
         }
 
         /// <summary>
@@ -131,7 +127,7 @@ namespace HealthGateway.AdminWebClient
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/ErrorPage");
 
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -142,6 +138,8 @@ namespace HealthGateway.AdminWebClient
                 app.UseResponseCompression();
             }
 
+            bool debugerAttached = System.Diagnostics.Debugger.IsAttached;
+
             app.UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
@@ -149,12 +147,12 @@ namespace HealthGateway.AdminWebClient
                         name: "default",
                         pattern: "{controller}/{action=Index}/{id?}");
 
-                    if (env.IsDevelopment())
+                    if (env.IsDevelopment() && debugerAttached)
                     {
                         endpoints.MapToVueCliProxy(
                             "{*path}",
                             new SpaOptions { SourcePath = "ClientApp" },
-                            npmScript: System.Diagnostics.Debugger.IsAttached ? "serve" : null,
+                            npmScript: "serve",
                             regex: "Compiled successfully",
                             forceKill: true);
                     }
@@ -163,6 +161,11 @@ namespace HealthGateway.AdminWebClient
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";
+                if (env.IsDevelopment() && !debugerAttached)
+                {
+                    // change this to whatever webpack dev server says it's running on
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:8080");
+                }
             });
         }
 
@@ -204,7 +207,7 @@ namespace HealthGateway.AdminWebClient
                         JwtSecurityToken accessToken = ctx.SecurityToken;
                         if (accessToken != null)
                         {
-                            ClaimsIdentity identity = ctx.Principal.Identity as ClaimsIdentity;
+                            ClaimsIdentity? identity = ctx.Principal.Identity as ClaimsIdentity;
                             if (identity != null)
                             {
                                 identity.AddClaim(new Claim("access_token", accessToken.RawData));

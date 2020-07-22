@@ -17,9 +17,8 @@
 namespace HealthGateway.WebClient
 {
     using System;
+    using System.Diagnostics;
     using System.Diagnostics.Contracts;
-    using Hangfire;
-    using Hangfire.PostgreSql;
     using HealthGateway.Common.AccessManagement.Authentication;
     using HealthGateway.Common.AspNetConfiguration;
     using HealthGateway.Common.Delegates;
@@ -30,12 +29,13 @@ namespace HealthGateway.WebClient
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Rewrite;
-    using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+    using Microsoft.AspNetCore.SpaServices;
     using Microsoft.AspNetCore.StaticFiles;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using VueCliMiddleware;
 
     /// <summary>
     /// Configures the application during startup.
@@ -70,6 +70,7 @@ namespace HealthGateway.WebClient
             this.startupConfig.ConfigureAuthServicesForJwtBearer(services);
             this.startupConfig.ConfigureAuthorizationServices(services);
             this.startupConfig.ConfigureSwaggerServices(services);
+            this.startupConfig.ConfigureHangfireQueue(services);
 
             // Add services
             services.AddTransient<IConfigurationService, ConfigurationService>();
@@ -81,13 +82,14 @@ namespace HealthGateway.WebClient
             services.AddTransient<IAuthenticationDelegate, AuthenticationDelegate>();
             services.AddTransient<INoteService, NoteService>();
             services.AddTransient<ICommentService, CommentService>();
-            services.AddSingleton<INonceService, NonceService>();
             services.AddTransient<ICommunicationService, CommunicationService>();
-            services.AddTransient<IUserPhoneService, UserPhoneService>();
+            services.AddTransient<IUserSMSService, UserSMSService>();
             services.AddTransient<INotificationSettingsService, NotificationSettingsService>();
+            services.AddTransient<IUserPreferenceDelegate, DBUserPreferenceDelegate>();
 
             // Add delegates
-            services.AddTransient<IProfileDelegate, DBProfileDelegate>();
+            services.AddTransient<IUserProfileDelegate, DBProfileDelegate>();
+            services.AddTransient<IUserPreferenceDelegate, DBUserPreferenceDelegate>();
             services.AddTransient<IEmailDelegate, DBEmailDelegate>();
             services.AddTransient<IMessagingVerificationDelegate, DBMessagingVerificationDelegate>();
             services.AddTransient<IFeedbackDelegate, DBFeedbackDelegate>();
@@ -104,8 +106,14 @@ namespace HealthGateway.WebClient
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-            services.AddHangfire(x => x.UsePostgreSqlStorage(this.configuration.GetConnectionString("GatewayConnection")));
-            JobStorage.Current = new PostgreSqlStorage(this.configuration.GetConnectionString("GatewayConnection"));
+            // Configure SPA
+            services.AddControllersWithViews();
+
+            // In production, the Vue files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
         }
 
         /// <summary>
@@ -113,15 +121,16 @@ namespace HealthGateway.WebClient
         /// </summary>
         /// <param name="app">The application builder.</param>
         /// <param name="env">The hosting environment.</param>
-        /// <param name="nonceService">Service that provides nonce utilities.</param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, INonceService nonceService)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             Contract.Requires(env != null);
+
+            app.UseSpaStaticFiles();
 
             this.startupConfig.UseForwardHeaders(app);
             this.startupConfig.UseSwagger(app);
             this.startupConfig.UseHttp(app);
-            this.startupConfig.UseContentSecurityPolicy(app, nonceService);
+            this.startupConfig.UseContentSecurityPolicy(app);
             this.startupConfig.UseAuth(app);
 
             if (env.IsDevelopment())
@@ -131,7 +140,45 @@ namespace HealthGateway.WebClient
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
+
+            if (!env.IsDevelopment())
+            {
+                app.UseResponseCompression();
+            }
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller}/{action=Index}/{id?}");
+
+                if (env.IsDevelopment() && Debugger.IsAttached)
+                {
+                    endpoints.MapToVueCliProxy(
+                        "{*path}",
+                        new SpaOptions { SourcePath = "ClientApp" },
+                        npmScript: "serve",
+                        port: 8585,
+                        regex: "Compiled successfully",
+                        forceKill: true);
+                }
+            });
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+                if (env.IsDevelopment() && !Debugger.IsAttached)
+                {
+                    // change this to whatever webpack dev server says it's running on
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:8080");
+                }
+            });
 
             bool redirectToWWW = this.configuration.GetSection("WebClient").GetValue<bool>("RedirectToWWW");
             if (redirectToWWW)
@@ -160,24 +207,6 @@ namespace HealthGateway.WebClient
                         headers["Content-Type"] = mimeType;
                     }
                 },
-            });
-
-            app.UseEndpoints(endpoints =>
-            {
-                // Mapping of endpoints goes here:
-                endpoints.MapControllers();
-                endpoints.MapRazorPages();
-                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapFallbackToController("Index", "Home");
-            });
-
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "dist";
-                if (env.IsDevelopment())
-                {
-                    spa.UseReactDevelopmentServer("dev");
-                }
             });
         }
     }

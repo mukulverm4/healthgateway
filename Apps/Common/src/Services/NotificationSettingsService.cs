@@ -16,7 +16,9 @@
 namespace HealthGateway.Common.Services
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using Hangfire;
     using HealthGateway.Common.Delegates;
@@ -29,27 +31,38 @@ namespace HealthGateway.Common.Services
     /// </summary>
     public class NotificationSettingsService : INotificationSettingsService
     {
-        private readonly INotificationSettingsDelegate notificationSettingsDelegate;
         private readonly ILogger<NotificationSettingsService> logger;
+        private readonly IBackgroundJobClient jobClient;
+        private readonly INotificationSettingsDelegate notificationSettingsDelegate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationSettingsService"/> class.
         /// </summary>
         /// <param name="logger">The injected logger provider.</param>
+        /// <param name="jobClient">The JobScheduler queue client.</param>
         /// <param name="notificationSettingsDelegate">Notification Settings delegate to be used.</param>
         public NotificationSettingsService(
             ILogger<NotificationSettingsService> logger,
+            IBackgroundJobClient jobClient,
             INotificationSettingsDelegate notificationSettingsDelegate)
         {
             this.logger = logger;
+            this.jobClient = jobClient;
             this.notificationSettingsDelegate = notificationSettingsDelegate;
         }
 
         /// <inheritdoc />
-        public void QueueNotificationSettings(NotificationSettingsRequest notificationSettings, string bearerToken)
+        public void QueueNotificationSettings(NotificationSettingsRequest notificationSettings)
         {
             this.logger.LogTrace($"Queueing Notification Settings push to PHSA...");
-            BackgroundJob.Enqueue<INotificationSettingsJob>(j => j.PushNotificationSettings(this.ValidateVerificationCode(notificationSettings), bearerToken));
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IgnoreNullValues = true,
+                WriteIndented = true,
+            };
+            string json = JsonSerializer.Serialize(ValidateVerificationCode(notificationSettings), options);
+            this.jobClient.Enqueue<INotificationSettingsJob>(j => j.PushNotificationSettings(json));
             this.logger.LogDebug($"Finished queueing Notification Settings push.");
         }
 
@@ -58,14 +71,15 @@ namespace HealthGateway.Common.Services
         {
             this.logger.LogTrace($"Queueing Notification Settings push to PHSA...");
             RequestResult<NotificationSettingsResponse> retVal = await this.notificationSettingsDelegate.
-                            SetNotificationSettings(this.ValidateVerificationCode(notificationSettings), bearerToken).ConfigureAwait(true);
+                            SetNotificationSettings(ValidateVerificationCode(notificationSettings), bearerToken).ConfigureAwait(true);
             this.logger.LogDebug($"Finished queueing Notification Settings push.");
             return retVal;
         }
 
-        private NotificationSettingsRequest ValidateVerificationCode(NotificationSettingsRequest notificationSettings)
+        [SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Team decision")]
+        private static NotificationSettingsRequest ValidateVerificationCode(NotificationSettingsRequest notificationSettings)
         {
-            if (!notificationSettings.SMSVerified && string.IsNullOrEmpty(notificationSettings.SMSVerificationCode))
+            if (notificationSettings.SMSEnabled && string.IsNullOrEmpty(notificationSettings.SMSVerificationCode))
             {
                 // Create the SMS validation code if the SMS is not verified and the caller didn't set it.
                 Random generator = new Random();

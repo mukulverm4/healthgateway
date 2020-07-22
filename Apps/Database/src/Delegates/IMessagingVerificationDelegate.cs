@@ -37,7 +37,7 @@ namespace HealthGateway.Database.Delegates
         /// </summary>
         /// <param name="inviteKey">The users inviteKey as emailed.</param>
         /// <returns>The message verification that was fetched.</returns>
-        MessagingVerification GetByInviteKey(Guid inviteKey);
+        MessagingVerification? GetByInviteKey(Guid inviteKey);
 
         /// <summary>
         /// Gets the last Messaging Verification for the user base on type and users HDID.
@@ -46,7 +46,7 @@ namespace HealthGateway.Database.Delegates
         /// <param name="hdid">The users hdid.</param>
         /// <param name="messagingVerificationType">The type to query.</param>
         /// <returns>The  message verification that was fetched.</returns>
-        MessagingVerification GetLastForUser(string hdid, string messagingVerificationType = MessagingVerificationType.Email);
+        MessagingVerification? GetLastForUser(string hdid, string messagingVerificationType);
 
         /// <summary>
         /// Updates a MessageingVerification using a populated model object.
